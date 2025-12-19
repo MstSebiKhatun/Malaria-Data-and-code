@@ -1,0 +1,53 @@
+function odebifb(p)
+global d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 d11 d12 d13 d14 d15 d16 d17
+
+d1=120; d2=0.01;d3=0.0196; d4=.95; d5=0.0005; d6=0.001; d7=0.02; d8=0.085 ;d9=.12;
+d10=.1; d11=1000; d12=.9;d13=0.9; d14=0.12; d15=0.1; d16=0.012; d17=0.015;
+     p=0.1;
+      pupto =.45;
+     incrementp =0.0085;
+   lupend = (pupto -p)/incrementp;
+
+    % n is the counter
+        n = 1;
+% create a loop where parameter will increse for n times and run the prog
+    while (n <= lupend)
+        n = n + 1;
+        p = p+ incrementp;
+        tupto =5000;
+        tspan = [0 ,tupto];
+    y0 =[20,11,7,1,500,200]; 
+[t,sol] = ode45(@f,tspan,y0);
+d = sol(:,1);
+%plot(t,d);
+% find p X q size
+[u q] = size(d);
+ % to skip first half points plot
+      for m=1000:u
+           % find maxima and minima and plot
+           sgn(m) = (d(m-2)- d(m-1)) * (d(m-1)-d(m));
+                      
+           if (sign(sgn(m-1)) <= 0)
+             plot(p, d(m),'r.');
+  grid on;
+  xlabel("\gamma_d", 'FontSize',14)
+  ylabel("S_H(t)",'FontSize',14)
+            end
+       % first plot is fixed next plots are added
+       hold on
+      end
+    end
+ 
+    function dydt = f(t,y)
+
+  dydt = [d1-d2*(1-exp(-y(2)))*y(4)*y(1)-d3*y(1)-d4*d5*y(1)*y(6)
+          d4*d5*y(1)*y(6)-d3*y(2)-d6*y(2)-d7*y(2)
+          d2*(1-exp(-y(2)))*y(4)*y(1)-d3*y(3)+d7*y(2)
+          d8+d9*y(2)-p*y(4)
+          d11-d12*d13*(exp(-y(4)))*y(2)*y(5)-d14*y(5)-d15*y(4)/(d16+y(4))*y(5)
+          d12*d13*(exp(-y(4)))*y(2)*y(5)-d17*y(6)-d15*y(4)/(d16+y(4))*y(6)];
+ 
+         
+    end
+    
+end
